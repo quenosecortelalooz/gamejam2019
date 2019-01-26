@@ -21,7 +21,7 @@ _sections_unfolded = [ "Resource" ]
 custom_solver_bias = 0.0
 radius = 10.0
 
-[node name="item" type="StaticBody2D" index="0"]
+[node name="item" type="StaticBody2D"]
 
 position = Vector2( 64.1607, 46.6782 )
 input_pickable = false
