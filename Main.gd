@@ -43,6 +43,7 @@ func _ready():
 	player.position = start_room.position
 	play_mode = true
 	make_fog()
+	set_physics_process(true)
 
 
 func make_rooms():
@@ -74,7 +75,7 @@ func _draw():
 	if end_room:
 		draw_string(font, end_room.position - Vector2(125,0), "Wife", Color(1,1,1))
 
-func _process(delta):
+func _physics_process(delta):
 	if player && gridFog:
 		var near_charger = false
 		for c in chargers:
@@ -85,17 +86,18 @@ func _process(delta):
 			if lantern_power < 2:
 				lantern_power = 2
 			if lantern_power < lantern_power_max:
-				lantern_power = lantern_power * 1.04 * (1 + (delta / 100))
+				lantern_power = lantern_power * 1.04
 		else:
-			lantern_power = lantern_power * 0.998 * (1 + (delta / 100))
-			if lantern_power < 2:
+			lantern_power = lantern_power * 0.99
+			if lantern_power < 1:
 				emit_signal("gameOver")
-		gridFog.refreshTiles(player.position, lantern_power)
+	update()
 
+func _process(delta):
+	if player && gridFog:	
+		gridFog.refreshTiles(player.position, lantern_power)
 		for c in chargers:
 			gridFog.refreshTiles(c, 2)
-
-
 	update()
 
 func _input(event):
