@@ -1,7 +1,7 @@
 extends Node
 
 var shown = {}
-var max_time = 100
+var max_time = 300
 var tilemap = null
 
 func _init(tiles, size):
@@ -19,12 +19,12 @@ func refreshTiles(center, radius):
 					var X = int(round(center.x / 32 + x))
 					var Y = int(round(center.y / 32 + y))
 					shown[str(X) + "," + str(Y)] = max_time
-					tilemap.set_cell(X, Y, -1)
+					tilemap.set_cell(X, Y, 10)
 
 func _process(delta):
 	if tilemap:
 		for k in shown.keys():
 			shown[k] -= 1
+			tilemap.set_cell(int(k.split(",")[0]), int(k.split(",")[1]), int(round((float(shown[k])/max_time)*10)))
 			if shown[k] == 0:
 				shown.erase(k)
-				tilemap.set_cell(int(k.split(",")[0]), int(k.split(",")[1]), 0)
