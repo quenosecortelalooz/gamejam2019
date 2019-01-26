@@ -23,6 +23,7 @@ var full_rect = Rect2()
 var lantern_power = 4
 var lantern_power_max = 5
 var traceFog = []
+var chargers = []
 
 var gridFog = null
 
@@ -70,25 +71,19 @@ func make_rooms():
 
 func _draw():
 	if start_room:
-		draw_string(font, start_room.position-Vector2(125,0), "Home", Color(1,1,1))
+		draw_string(font, start_room.position - Vector2(125,0), "Home", Color(1,1,1))
 	if end_room:
-		draw_string(font, end_room.position-Vector2(125,0), "Wife", Color(1,1,1))
-	# if play_mode:
-	# 	return
-	# for room in $Rooms.get_children():
-	# 	draw_rect(Rect2(room.position - room.size, room.size * 2),
-	# 			 Color(0, 1, 0), false)
-	# if path:
-	# 	for p in path.get_points():
-	# 		for c in path.get_point_connections(p):
-	# 			var pp = path.get_point_position(p)
-	# 			var cp = path.get_point_position(c)
-	# 			draw_line(Vector2(pp.x, pp.y), Vector2(cp.x, cp.y),
-	# 					  Color(1, 1, 0), 15, true)
+		draw_string(font, end_room.position - Vector2(125,0), "Wife", Color(1,1,1))
 
 func _process(delta):
 	if player && gridFog:
-		if player.position.distance_to(start_room.position) < 100:
+		var near_charger = false
+		for c in chargers:
+			if player.position.distance_to(c) < 50:
+				near_charger = true
+				break
+
+		if near_charger:
 			if lantern_power < 2:
 				lantern_power = 2
 			if lantern_power < lantern_power_max:
@@ -97,6 +92,10 @@ func _process(delta):
 			lantern_power = lantern_power * 0.998
 
 		gridFog.refreshTiles(player.position, lantern_power)
+
+		for c in chargers:
+			gridFog.refreshTiles(c, 2)
+
 
 	update()
 
@@ -242,9 +241,11 @@ func carve_path(pos1, pos2):
 func find_start_room():
 	var min_x = INF
 	for room in $Rooms.get_children():
+		chargers.append(room.position)
 		if room.position.x < min_x:
 			start_room = room
 			min_x = room.position.x
+	# chargers.append(start_room.position)
 
 func find_end_room():
 	var max_x = -INF
@@ -252,3 +253,4 @@ func find_end_room():
 		if room.position.x > max_x:
 			end_room = room
 			max_x = room.position.x
+	# chargers.append(end_room.position)
