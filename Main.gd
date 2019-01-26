@@ -1,7 +1,7 @@
 extends Node2D
+signal gameOver
 
 var Room = preload("res://Room.tscn")
-var Player = preload("res://Character.tscn")
 var font = preload("res://assets/RobotoBold120.tres")
 onready var Map = $TileMap
 onready var Fog = $TileFog
@@ -39,8 +39,7 @@ func _ready():
 	gridFog = load("GridFog.gd").new(Fog, full_rect)
 	add_child(gridFog)
 
-	player = Player.instance()
-	add_child(player)
+	player = $Character
 	player.position = start_room.position
 	play_mode = true
 	make_fog()
@@ -82,15 +81,15 @@ func _process(delta):
 			if player.position.distance_to(c) < 50:
 				near_charger = true
 				break
-
 		if near_charger:
 			if lantern_power < 2:
 				lantern_power = 2
 			if lantern_power < lantern_power_max:
-				lantern_power = lantern_power * 1.04
+				lantern_power = lantern_power * 1.04 * (1 + (delta / 100))
 		else:
-			lantern_power = lantern_power * 0.998
-
+			lantern_power = lantern_power * 0.998 * (1 + (delta / 100))
+			if lantern_power < 2:
+				emit_signal("gameOver")
 		gridFog.refreshTiles(player.position, lantern_power)
 
 		for c in chargers:
@@ -113,10 +112,11 @@ func _input(event):
 	if event.is_action_pressed('ui_focus_next'):
 		make_map()
 	if event.is_action_pressed('ui_cancel'):
-		player = Player.instance()
-		add_child(player)
-		player.position = start_room.position
-		play_mode = true
+		pass
+		#player = Player.instance()
+		#add_child(player)
+		#player.position = start_room.position
+		#play_mode = true
 
 func find_mst(nodes):
 	# Prim's algorithm

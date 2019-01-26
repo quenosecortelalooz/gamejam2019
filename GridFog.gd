@@ -24,7 +24,9 @@ func refreshTiles(center, radius):
 func _process(delta):
 	if tilemap:
 		for k in shown.keys():
-			shown[k] -= 1
+			shown[k] -= 100 * delta
+			if shown[k] < 0:
+				shown[k] = 0
 			tilemap.set_cell(int(k.split(",")[0]), int(k.split(",")[1]), int(round((float(shown[k])/max_time)*10)))
 			if shown[k] == 0:
 				shown.erase(k)

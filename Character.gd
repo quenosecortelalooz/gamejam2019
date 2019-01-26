@@ -26,3 +26,7 @@ func get_input():
 func _physics_process(delta):
 	get_input()
 	velocity = move_and_slide(velocity)
+
+
+func _on_Main_gameOver():
+	print('gameOver')
