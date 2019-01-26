@@ -26,13 +26,19 @@ var lantern_power = 4
 var lantern_power_max = 5
 var traceFog = []
 
+var gridFog = null
+
 func _ready():
+
 	randomize()
 	make_rooms()
 
 	yield(get_tree().create_timer(1.5), "timeout")
 
 	make_map()
+
+	gridFog = load("GridFog.gd").new(Fog, full_rect)
+	add_child(gridFog)
 
 	player = Player.instance()
 	lantern = Lantern.instance()
@@ -86,7 +92,7 @@ func _draw():
 	# 					  Color(1, 1, 0), 15, true)
 
 func _process(delta):
-	if player && lantern:
+	if player && lantern && gridFog:
 		if player.position.distance_to(start_room.position) < 100:
 			if lantern_power < 2:
 				lantern = 2
@@ -95,15 +101,7 @@ func _process(delta):
 		else:
 			lantern_power = lantern_power * 0.998
 
-		for x in range(-lantern_power - 2, lantern_power + 2):
-			for y in range(-lantern_power - 2, lantern_power + 2):
-				Fog.set_cell(int(round(player.position.x / 32 + x)) , int(round(player.position.y / 32 + y)), 0)
-
-
-		for x in range(-lantern_power, lantern_power):
-			for y in range(-lantern_power, lantern_power):
-				if (x * x + y * y <= lantern_power * lantern_power):
-					Fog.set_cell(int(round(player.position.x / 32 + x)) , int(round(player.position.y / 32 + y)), -1)
+		gridFog.refreshTiles(player.position, lantern_power)
 
 	update()
 
