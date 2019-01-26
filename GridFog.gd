@@ -16,7 +16,6 @@ func _ready():
 
 func refreshTiles(center, radius):
 	if tilemap != null:
-		print("aca2")
 		for x in range(-radius, radius):
 			for y in range(-radius, radius):
 				if (x * x + y * y <= radius * radius):

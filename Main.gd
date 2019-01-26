@@ -2,7 +2,6 @@ extends Node2D
 
 var Room = preload("res://Room.tscn")
 var Player = preload("res://Character.tscn")
-var Lantern = preload("res://Lantern.tscn")
 var font = preload("res://assets/RobotoBold120.tres")
 onready var Map = $TileMap
 onready var Fog = $TileFog
@@ -19,7 +18,6 @@ var start_room = null
 var end_room = null
 var play_mode = false
 var player = null
-var lantern = null
 var full_rect = Rect2()
 
 var lantern_power = 4
@@ -41,11 +39,8 @@ func _ready():
 	add_child(gridFog)
 
 	player = Player.instance()
-	lantern = Lantern.instance()
 	add_child(player)
-	add_child(lantern)
 	player.position = start_room.position
-	lantern.position = start_room.position
 	play_mode = true
 	make_fog()
 
@@ -92,10 +87,10 @@ func _draw():
 	# 					  Color(1, 1, 0), 15, true)
 
 func _process(delta):
-	if player && lantern && gridFog:
+	if player && gridFog:
 		if player.position.distance_to(start_room.position) < 100:
 			if lantern_power < 2:
-				lantern = 2
+				lantern_power = 2
 			if lantern_power < lantern_power_max:
 				lantern_power = lantern_power * 1.04
 		else:
