@@ -5,6 +5,7 @@ var Player = preload("res://Character.tscn")
 var Lantern = preload("res://Lantern.tscn")
 var font = preload("res://assets/RobotoBold120.tres")
 onready var Map = $TileMap
+onready var Fog = $TileFog
 
 var tile_size = 32  # size of a tile in the TileMap
 var num_rooms = 50  # number of rooms to generate
@@ -19,8 +20,11 @@ var end_room = null
 var play_mode = false
 var player = null
 var lantern = null
+var full_rect = Rect2()
 
-var fog = []
+var lantern_power = 4
+var lantern_power_max = 5
+var traceFog = []
 
 func _ready():
 	randomize()
@@ -37,6 +41,7 @@ func _ready():
 	player.position = start_room.position
 	lantern.position = start_room.position
 	play_mode = true
+	make_fog()
 
 
 func make_rooms():
@@ -63,8 +68,6 @@ func make_rooms():
 	path = find_mst(room_positions)
 
 func _draw():
-	if player && lantern:
-		lantern.position = player.position
 	if start_room:
 		draw_string(font, start_room.position-Vector2(125,0), "Home", Color(1,1,1))
 	if end_room:
@@ -84,14 +87,23 @@ func _draw():
 
 func _process(delta):
 	if player && lantern:
-		if lantern.position.distance_to(start_room.position) < 100:
-			if lantern.texture_scale < 0.1:
-				lantern.texture_scale = 0.1
-			if lantern.texture_scale < 2:
-				lantern.texture_scale = lantern.texture_scale * 1.04
+		if player.position.distance_to(start_room.position) < 100:
+			if lantern_power < 2:
+				lantern = 2
+			if lantern_power < lantern_power_max:
+				lantern_power = lantern_power * 1.04
 		else:
-			lantern.texture_scale = lantern.texture_scale * 0.998
+			lantern_power = lantern_power * 0.998
 
+		for x in range(-lantern_power - 2, lantern_power + 2):
+			for y in range(-lantern_power - 2, lantern_power + 2):
+				Fog.set_cell(int(round(player.position.x / 32 + x)) , int(round(player.position.y / 32 + y)), 0)
+
+
+		for x in range(-lantern_power, lantern_power):
+			for y in range(-lantern_power, lantern_power):
+				if (x * x + y * y <= lantern_power * lantern_power):
+					Fog.set_cell(int(round(player.position.x / 32 + x)) , int(round(player.position.y / 32 + y)), -1)
 
 	update()
 
@@ -153,6 +165,15 @@ func find_mst(nodes):
 		path.connect_points(randi() % len(points), randi() % len(points))
 	return path
 
+func make_fog():
+	Fog.clear()
+	var topleft = Map.world_to_map(full_rect.position)
+	var bottomright = Map.world_to_map(full_rect.end)
+	for x in range(topleft.x, bottomright.x):
+		for y in range(topleft.y, bottomright.y):
+			Fog.set_cell(x, y, 0)
+
+
 func make_map():
 	# Create a TileMap from the generated rooms and path
 	Map.clear()
@@ -160,7 +181,6 @@ func make_map():
 	find_end_room()
 
 	# Fill TileMap with walls, then carve empty rooms
-	var full_rect = Rect2()
 	for room in $Rooms.get_children():
 		var r = Rect2(room.position-room.size,
 					room.get_node("CollisionShape2D").shape.extents*2)
