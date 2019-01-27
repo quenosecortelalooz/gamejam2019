@@ -25,6 +25,7 @@ var end_room = null
 var play_mode = false
 var player = null
 var full_rect = Rect2()
+var gameOver = false
 
 export var lantern_power = 4
 export var lantern_power_max = 6
@@ -34,6 +35,8 @@ var initial_label = ""
 var traceFog = []
 var chargers = []
 
+var timer = null
+var timerWin = null
 var gridFog = null
 
 func init(num_rooms_param, light_decay_param, wolf_prob_param, initial_label_param, cull_param):
@@ -50,11 +53,13 @@ func _ready():
 
 	initialText.text = initial_label
 	initialText.show()
-	var timer = Timer.new()
+	timer = Timer.new()
 	add_child(timer)
 	timer.connect("timeout", self, "removeInitialText")
-	timer.set_wait_time(2)
+	timer.set_wait_time(3)
+	timer.one_shot = true
 	timer.start()
+	
 
 	randomize()
 	make_rooms()
@@ -92,8 +97,19 @@ func _on_Grab_Torch():
 	print("player grabbed torch")
 
 func _on_Reached_Home():
-	print("player reached home")
-
+	timer.start()
+	initialText.text = 'Llegue!'
+	initialText.show()
+	timerWin = Timer.new()
+	add_child(timerWin)
+	timerWin.connect("timeout", self, "timerWinSignal")
+	timerWin.set_wait_time(2)
+	timerWin.one_shot = true
+	timerWin.start()
+	
+func timerWinSignal():
+	emit_signal("gameWin")
+	
 
 func spawn_wolves():
 	for room in $Rooms.get_children():
@@ -147,8 +163,8 @@ func _physics_process(delta):
 				room = c
 				break
 		if near_charger:
-			if room == end_room.position:
-				emit_signal("gameWin")
+			#if room == end_room.position:
+			#	emit_signal("gameWin")
 			if lantern_power <= 0:
 				lantern_power = 0.4 * lantern_power_max
 			if lantern_power < lantern_power_max:
@@ -156,8 +172,11 @@ func _physics_process(delta):
 				emit_signal("lanternPowerChanged", lantern_power)
 		else:
 			lantern_power = lantern_power - light_decay
-			if lantern_power < 0:
+			if lantern_power < 0 && gameOver == false:
+				gameOver = true
 				lantern_power = 0
+				initialText.text = 'Game Over'
+				initialText.show()
 				emit_signal("gameOver")
 			emit_signal("lanternPowerChanged", lantern_power)
 
@@ -166,21 +185,6 @@ func _physics_process(delta):
 		for c in chargers:
 			gridFog.illuminateTiles(c, 2, 1)
 
-func _input(event):
-	if event.is_action_pressed('ui_select'):
-		if play_mode:
-			player.queue_free()
-			play_mode = false
-		for n in $Rooms.get_children():
-			n.queue_free()
-		path = null
-		start_room = null
-		end_room = null
-		make_rooms()
-	if event.is_action_pressed('ui_focus_next'):
-		make_map()
-	if event.is_action_pressed('ui_cancel'):
-		pass
 
 func find_mst(nodes):
 	# Prim's algorithm

@@ -49,7 +49,7 @@ speed = 250
 scale = Vector2( 0.04, 0.04 )
 frames = SubResource( 1 )
 animation = "run"
-frame = 2
+frame = 5
 playing = true
 _sections_unfolded = [ "Material", "Transform" ]
 
