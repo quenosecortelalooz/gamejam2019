@@ -1,15 +1,10 @@
 extends KinematicBody2D
 
-# class member variables go here, for example:
-# var a = 2
-# var b = "textvar"
 var player = null
 var speed = 120
 var velocity = Vector2()
 
 func _ready():
-	# Called when the node is added to the scene for the first time.
-	# Initialization here
 	set_physics_process(true)
 
 func _physics_process(delta):

@@ -12,7 +12,7 @@ func _ready():
 	update_light(lantern_power_max)
 
 
-func _on_Main_lanternPowerChanged(lantern_power):
+func _on_Level_lanternPowerChanged(lantern_power):
 	update_light(lantern_power)
 
 
