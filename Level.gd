@@ -1,5 +1,6 @@
 extends Node2D
 signal gameOver
+signal gameWin
 signal lanternPowerChanged
 
 var Room = preload("res://Room.tscn")
@@ -9,13 +10,14 @@ var Home = preload("res://Home.tscn")
 var font = preload("res://assets/RobotoBold120.tres")
 onready var Map = $TileMap
 onready var Fog = $TileFog
+onready var initialText = $CanvasLayer/InitialText
 
 var tile_size = 32  # size of a tile in the TileMap
 var num_rooms = 50  # number of rooms to generate
 var min_size = 6  # minimum room size (in tiles)
 var max_size = 10  # maximum room size (in tiles)
 var hspread = 0  # horizontal spread (in pixels)
-var cull = 0.5  # chance to cull room
+var cull = 0  # chance to cull room
 
 var path  # AStar pathfinding object
 var start_room = null
@@ -26,12 +28,32 @@ var full_rect = Rect2()
 
 export var lantern_power = 4
 export var lantern_power_max = 6
+var light_decay = 0.01
+var wolf_prob = 1
+var initial_label = ""
 var traceFog = []
 var chargers = []
 
 var gridFog = null
 
+func init(num_rooms_param, light_decay_param, wolf_prob_param, initial_label_param):
+	num_rooms = num_rooms_param
+	light_decay = light_decay_param
+	wolf_prob = wolf_prob_param
+	initial_label = initial_label_param
+
+func removeInitialText():
+	initialText.hide()
+
 func _ready():
+
+	initialText.text = initial_label
+	initialText.show()
+	var timer = Timer.new()
+	add_child(timer)
+	timer.connect("timeout", self, "removeInitialText")
+	timer.set_wait_time(2)
+	timer.start()
 
 	randomize()
 	make_rooms()
@@ -74,7 +96,7 @@ func _on_Reached_Home():
 
 func spawn_wolves():
 	for room in $Rooms.get_children():
-		if randf() < 1:
+		if room != start_room and room != end_room and randf() < wolf_prob:
 			var wolf = Wolf.instance()
 			wolf.set_meta("name", "Wolf")
 			wolf.position = room.position
@@ -106,19 +128,23 @@ func make_rooms():
 
 func _physics_process(delta):
 	if player && gridFog:
+		var room = null
 		var near_charger = false
 		for c in chargers:
 			if player.position.distance_to(c) < 80:
 				near_charger = true
+				room = c
 				break
 		if near_charger:
+			if room == end_room.position:
+				emit_signal("gameWin")
 			if lantern_power <= 0:
 				lantern_power = 0.4 * lantern_power_max
 			if lantern_power < lantern_power_max:
 				lantern_power = lantern_power * 1.04
 				emit_signal("lanternPowerChanged", lantern_power)
 		else:
-			lantern_power = lantern_power - 0.03
+			lantern_power = lantern_power - light_decay
 			if lantern_power < 0:
 				lantern_power = 0
 				emit_signal("gameOver")
@@ -268,7 +294,7 @@ func find_start_room():
 func find_end_room():
 	var max_x = -INF
 	for room in $Rooms.get_children():
-		if room.position.x > max_x:
+		if room.position.x > max_x and room != start_room:
 			end_room = room
 			max_x = room.position.x
 	# chargers.append(end_room.position)
