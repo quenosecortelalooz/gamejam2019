@@ -10,9 +10,10 @@ var velocity = Vector2()
 func _ready():
 	# Called when the node is added to the scene for the first time.
 	# Initialization here
+	set_physics_process(true)
 	pass
 
-func _process(delta):
+func _physics_process(delta):
 	if !player:
 		$Sprite.play("idle")
 		return
