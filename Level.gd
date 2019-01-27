@@ -36,11 +36,12 @@ var chargers = []
 
 var gridFog = null
 
-func init(num_rooms_param, light_decay_param, wolf_prob_param, initial_label_param):
+func init(num_rooms_param, light_decay_param, wolf_prob_param, initial_label_param, cull_param):
 	num_rooms = num_rooms_param
 	light_decay = light_decay_param
 	wolf_prob = wolf_prob_param
 	initial_label = initial_label_param
+	cull = cull_param
 
 func removeInitialText():
 	initialText.hide()
@@ -75,7 +76,7 @@ func _ready():
 
 func spawn_home():
 	var home = Home.instance()
-	home.position = start_room.position
+	home.position = end_room.position
 	add_child(home)
 	home.connect("reachedHome", self, "_on_Reached_Home")
 
