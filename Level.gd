@@ -4,6 +4,8 @@ signal lanternPowerChanged
 
 var Room = preload("res://Room.tscn")
 var Wolf = preload("res://Wolf.tscn")
+var Torch = preload("res://Torch.tscn")
+var Home = preload("res://Home.tscn")
 var font = preload("res://assets/RobotoBold120.tres")
 onready var Map = $TileMap
 onready var Fog = $TileFog
@@ -46,6 +48,28 @@ func _ready():
 	play_mode = true
 	set_physics_process(true)
 	spawn_wolves()
+	spawn_torches()
+	spawn_home()
+
+func spawn_home():
+	var home = Home.instance()
+	home.position = start_room.position
+	add_child(home)
+	home.connect("reachedHome", self, "_on_Reached_Home")
+
+func spawn_torches():
+	for room in $Rooms.get_children():
+		if room.position != end_room.position:
+			var torch = Torch.instance()
+			torch.position = room.position
+			add_child(torch)
+			torch.connect("grabTorch", self, "_on_Grab_Torch")
+
+func _on_Grab_Torch():
+	print("player grabbed torch")
+
+func _on_Reached_Home():
+	print("player reached home")
 
 
 func spawn_wolves():
