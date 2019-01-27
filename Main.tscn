@@ -4,7 +4,7 @@
 [ext_resource path="res://assets/Inicio.png" type="Texture" id=2]
 [ext_resource path="res://assets/RobotoBold24.tres" type="DynamicFont" id=3]
 
-[node name="Main" type="Node2D" index="0"]
+[node name="Main" type="Node2D"]
 
 script = ExtResource( 1 )
 _sections_unfolded = [ "Z Index" ]
