@@ -23,7 +23,7 @@ var player = null
 var full_rect = Rect2()
 
 export var lantern_power = 4
-export var lantern_power_max = 5
+export var lantern_power_max = 6
 var traceFog = []
 var chargers = []
 
@@ -44,7 +44,6 @@ func _ready():
 	player.set_meta("name", "Player")
 	player.position = start_room.position
 	play_mode = true
-	make_fog()
 	set_physics_process(true)
 	spawn_wolves()
 
@@ -81,38 +80,30 @@ func make_rooms():
 	# generate a minimum spanning tree connecting the rooms
 	path = find_mst(room_positions)
 
-func _draw():
-	if start_room:
-		draw_string(font, start_room.position - Vector2(125,0), "Home", Color(1,1,1))
-	if end_room:
-		draw_string(font, end_room.position - Vector2(125,0), "Wife", Color(1,1,1))
-
 func _physics_process(delta):
 	if player && gridFog:
 		var near_charger = false
 		for c in chargers:
-			if player.position.distance_to(c) < 50:
+			if player.position.distance_to(c) < 80:
 				near_charger = true
 				break
 		if near_charger:
-			if lantern_power < 2:
-				lantern_power = 2
+			if lantern_power <= 0:
+				lantern_power = 0.4 * lantern_power_max
 			if lantern_power < lantern_power_max:
 				lantern_power = lantern_power * 1.04
 				emit_signal("lanternPowerChanged", lantern_power)
 		else:
-			lantern_power = lantern_power * 0.99
-			if lantern_power < 1:
+			lantern_power = lantern_power - 0.03
+			if lantern_power < 0:
+				lantern_power = 0
 				emit_signal("gameOver")
-			emit_signal("lanternPowerChanged", lantern_power)				
-	update()
+			emit_signal("lanternPowerChanged", lantern_power)
 
-func _process(delta):
 	if player && gridFog:	
-		gridFog.refreshTiles(player.position, lantern_power)
+		gridFog.illuminateTiles(player.position, lantern_power, 0)
 		for c in chargers:
-			gridFog.refreshTiles(c, 2)
-	update()
+			gridFog.illuminateTiles(c, 2, 1)
 
 func _input(event):
 	if event.is_action_pressed('ui_select'):
@@ -168,15 +159,6 @@ func find_mst(nodes):
 	for i in range(3):
 		path.connect_points(randi() % len(points), randi() % len(points))
 	return path
-
-func make_fog():
-	Fog.clear()
-	var topleft = Map.world_to_map(full_rect.position)
-	var bottomright = Map.world_to_map(full_rect.end)
-	for x in range(topleft.x, bottomright.x):
-		for y in range(topleft.y, bottomright.y):
-			Fog.set_cell(x, y, 0)
-
 
 func make_map():
 	# Create a TileMap from the generated rooms and path

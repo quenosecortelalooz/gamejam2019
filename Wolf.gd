@@ -11,7 +11,6 @@ func _ready():
 	# Called when the node is added to the scene for the first time.
 	# Initialization here
 	set_physics_process(true)
-	pass
 
 func _physics_process(delta):
 	if !player:
@@ -27,11 +26,9 @@ func _physics_process(delta):
 	
 
 func _on_Area2D_body_entered(body):
-	print(body.get_meta("name"))
 	if body.get_meta("name") == "Player":
 		player = body
 
 func _on_Area2D_body_exited(body):
-	print(body.get_meta("name"))
 	if body.get_meta("name") == "Player":
 		player = null

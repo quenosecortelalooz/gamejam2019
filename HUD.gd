@@ -17,7 +17,7 @@ func _on_Main_lanternPowerChanged(lantern_power):
 
 
 func update_light(new_value):
-	tween.interpolate_property(self, "animated_light", animated_light, new_value, 0.6, Tween.TRANS_LINEAR, Tween.EASE_IN)
+	tween.interpolate_property(self, "animated_light", animated_light, new_value, 0.1, Tween.EASE_IN, Tween.EASE_IN)
 	if not tween.is_active():
 		tween.start()
 

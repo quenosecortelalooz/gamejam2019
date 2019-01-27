@@ -14,7 +14,7 @@
 script = ExtResource( 1 )
 _sections_unfolded = [ "Z Index" ]
 lantern_power = 4
-lantern_power_max = 5
+lantern_power_max = 6
 
 [node name="Rooms" type="Node" parent="." index="0"]
 
@@ -67,6 +67,7 @@ _sections_unfolded = [ "Cell", "Collision", "Material", "Occluder", "Visibility"
 
 [node name="TileFog" type="TileMap" parent="." index="3"]
 
+z_index = 100
 mode = 0
 tile_set = ExtResource( 3 )
 cell_size = Vector2( 32, 32 )
@@ -84,9 +85,12 @@ collision_mask = 1
 occluder_light_mask = 1
 format = 1
 tile_data = PoolIntArray(  )
-_sections_unfolded = [ "Cell", "Collision", "Material" ]
+_sections_unfolded = [ "Cell", "Collision", "Material", "Z Index" ]
 
 [node name="Character" parent="." index="4" instance=ExtResource( 4 )]
+
+z_index = 50
+_sections_unfolded = [ "Collision", "Transform", "Z Index" ]
 
 [node name="CanvasLayer" type="CanvasLayer" parent="." index="5"]
 
