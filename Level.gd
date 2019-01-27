@@ -102,6 +102,16 @@ func spawn_wolves():
 			wolf.set_meta("name", "Wolf")
 			wolf.position = room.position
 			add_child(wolf)
+			if wolf_prob > 1:
+				var p = wolf_prob - 1
+				while p >= 0:
+					if randf() < p:
+						var w = Wolf.instance()
+						w.set_meta("name", "Wolf")
+						w.position = room.position + Vector2(randf(), randf())*20
+						add_child(w)
+					p -= 1
+				
 
 
 func make_rooms():

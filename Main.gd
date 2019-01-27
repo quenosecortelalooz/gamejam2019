@@ -16,7 +16,9 @@ func startLevel():
 	if level_num == 4:
 		level.init(9, 0.04, 0.8, "NIVEL 3\nSHIT!\nSe hace mas dificil!", 0.2)
 	if level_num == 5:
-		level.init(15, 0.04, 1, "NIVEL 3\nSHIT!\nSe hace mas dificil!", 0.4)
+		level.init(15, 0.04, 2, "NIVEL 4\nOMG!\nFucking lobos!", 0.4)
+	if level_num == 5:
+		level.init(15, 0.04, 5, "NIVEL 5\n.....", 0.4)
 	level.connect("gameOver", self, "_on_Level_gameOver")
 	level.connect("gameWin", self, "_on_Level_gameWin")
 	add_child(level)
