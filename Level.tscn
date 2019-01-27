@@ -93,7 +93,6 @@ _sections_unfolded = [ "Collision", "Transform", "Z Index" ]
 
 [node name="CanvasLayer" type="CanvasLayer" parent="." index="5"]
 
-editor/display_folded = true
 layer = 1
 offset = Vector2( 0, 0 )
 rotation = 0.0
@@ -102,7 +101,6 @@ transform = Transform2D( 1, 0, 0, 1, 0, 0 )
 
 [node name="HUD" parent="CanvasLayer" index="0" instance=ExtResource( 5 )]
 
-editor/display_folded = true
 anchor_right = 1.0
 anchor_bottom = 1.0
 margin_right = 1302.0
@@ -175,6 +173,26 @@ radial_fill_degrees = 360.0
 radial_center_offset = Vector2( 0, 0 )
 nine_patch_stretch = false
 _sections_unfolded = [ "Margin", "Textures" ]
+
+[node name="InitialText" type="Label" parent="CanvasLayer" index="1"]
+
+anchor_left = 0.0
+anchor_top = 0.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+rect_pivot_offset = Vector2( 0, 0 )
+rect_clip_content = false
+mouse_filter = 2
+mouse_default_cursor_shape = 0
+size_flags_horizontal = 1
+size_flags_vertical = 4
+text = "Hola"
+align = 1
+valign = 1
+percent_visible = 1.0
+lines_skipped = 0
+max_lines_visible = -1
+_sections_unfolded = [ "Anchor", "Margin", "Visibility" ]
 
 [connection signal="lanternPowerChanged" from="." to="CanvasLayer/HUD" method="_on_Level_lanternPowerChanged"]
 
