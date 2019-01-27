@@ -1,21 +1,23 @@
-[gd_scene load_steps=9 format=2]
+[gd_scene load_steps=11 format=2]
 
 [ext_resource path="res://Character.gd" type="Script" id=1]
 [ext_resource path="res://assets/character/standing/stand_001.png" type="Texture" id=2]
-[ext_resource path="res://assets/character/walk/walk_000.png" type="Texture" id=3]
-[ext_resource path="res://assets/character/walk/walk_001.png" type="Texture" id=4]
-[ext_resource path="res://assets/character/walk/walk_002.png" type="Texture" id=5]
-[ext_resource path="res://assets/character/walk/walk_003.png" type="Texture" id=6]
+[ext_resource path="res://assets/character/standing/stand_002.png" type="Texture" id=3]
+[ext_resource path="res://assets/character/standing/stand_003.png" type="Texture" id=4]
+[ext_resource path="res://assets/character/walk/walk_000.png" type="Texture" id=5]
+[ext_resource path="res://assets/character/walk/walk_001.png" type="Texture" id=6]
+[ext_resource path="res://assets/character/walk/walk_002.png" type="Texture" id=7]
+[ext_resource path="res://assets/character/walk/walk_003.png" type="Texture" id=8]
 
 [sub_resource type="SpriteFrames" id=1]
 
 animations = [ {
-"frames": [ ExtResource( 2 ) ],
+"frames": [ ExtResource( 2 ), ExtResource( 3 ), ExtResource( 4 ) ],
 "loop": true,
 "name": "idle",
-"speed": 1.0
+"speed": 4.0
 }, {
-"frames": [ ExtResource( 3 ), ExtResource( 4 ), ExtResource( 5 ), ExtResource( 6 ) ],
+"frames": [ ExtResource( 5 ), ExtResource( 6 ), ExtResource( 7 ), ExtResource( 8 ) ],
 "loop": true,
 "name": "run",
 "speed": 10.0
@@ -42,10 +44,10 @@ speed = 250
 
 [node name="Sprite" type="AnimatedSprite" parent="." index="0"]
 
-scale = Vector2( 0.7, 0.7 )
+scale = Vector2( 0.9, 0.9 )
 frames = SubResource( 1 )
 animation = "run"
-frame = 3
+frame = 2
 playing = true
 _sections_unfolded = [ "Material", "Transform" ]
 
