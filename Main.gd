@@ -1,5 +1,6 @@
 extends Node2D
 signal gameOver
+signal lanternPowerChanged
 
 var Room = preload("res://Room.tscn")
 var Wolf = preload("res://Wolf.tscn")
@@ -21,8 +22,8 @@ var play_mode = false
 var player = null
 var full_rect = Rect2()
 
-var lantern_power = 4
-var lantern_power_max = 5
+export var lantern_power = 4
+export var lantern_power_max = 5
 var traceFog = []
 var chargers = []
 
@@ -98,10 +99,12 @@ func _physics_process(delta):
 				lantern_power = 2
 			if lantern_power < lantern_power_max:
 				lantern_power = lantern_power * 1.04
+				emit_signal("lanternPowerChanged", lantern_power)
 		else:
 			lantern_power = lantern_power * 0.99
 			if lantern_power < 1:
 				emit_signal("gameOver")
+			emit_signal("lanternPowerChanged", lantern_power)				
 	update()
 
 func _process(delta):
@@ -126,10 +129,6 @@ func _input(event):
 		make_map()
 	if event.is_action_pressed('ui_cancel'):
 		pass
-		#player = Player.instance()
-		#add_child(player)
-		#player.position = start_room.position
-		#play_mode = true
 
 func find_mst(nodes):
 	# Prim's algorithm
