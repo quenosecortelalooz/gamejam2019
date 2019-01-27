@@ -1,5 +1,6 @@
 extends Node2D
 signal gameOver
+signal gameWin
 signal lanternPowerChanged
 
 var Room = preload("res://Room.tscn")
@@ -103,12 +104,16 @@ func make_rooms():
 
 func _physics_process(delta):
 	if player && gridFog:
+		var room = null
 		var near_charger = false
 		for c in chargers:
 			if player.position.distance_to(c) < 80:
 				near_charger = true
+				room = c
 				break
 		if near_charger:
+			if room == end_room.position:
+				emit_signal("gameWin")
 			if lantern_power <= 0:
 				lantern_power = 0.4 * lantern_power_max
 			if lantern_power < lantern_power_max:
@@ -265,7 +270,7 @@ func find_start_room():
 func find_end_room():
 	var max_x = -INF
 	for room in $Rooms.get_children():
-		if room.position.x > max_x:
+		if room.position.x > max_x and room != start_room:
 			end_room = room
 			max_x = room.position.x
 	# chargers.append(end_room.position)
