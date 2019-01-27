@@ -2,6 +2,7 @@ extends Node2D
 signal gameOver
 
 var Room = preload("res://Room.tscn")
+var Wolf = preload("res://Wolf.tscn")
 var font = preload("res://assets/RobotoBold120.tres")
 onready var Map = $TileMap
 onready var Fog = $TileFog
@@ -35,15 +36,25 @@ func _ready():
 	yield(get_tree().create_timer(1.5), "timeout")
 
 	make_map()
-
 	gridFog = load("GridFog.gd").new(Fog, full_rect)
 	add_child(gridFog)
 
 	player = $Character
+	player.set_meta("name", "Player")
 	player.position = start_room.position
 	play_mode = true
 	make_fog()
 	set_physics_process(true)
+	spawn_wolves()
+
+
+func spawn_wolves():
+	for room in $Rooms.get_children():
+		if randf() < 1:
+			var wolf = Wolf.instance()
+			wolf.set_meta("name", "Wolf")
+			wolf.position = room.position
+			add_child(wolf)
 
 
 func make_rooms():

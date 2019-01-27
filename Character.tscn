@@ -1,12 +1,34 @@
-[gd_scene load_steps=4 format=2]
+[gd_scene load_steps=13 format=2]
 
 [ext_resource path="res://Character.gd" type="Script" id=1]
-[ext_resource path="res://icon.png" type="Texture" id=2]
+[ext_resource path="res://assets/ogaCharacter/Animated Spirites/standing/standing_000.png" type="Texture" id=2]
+[ext_resource path="res://assets/ogaCharacter/Animated Spirites/standing/standing_001.png" type="Texture" id=3]
+[ext_resource path="res://assets/ogaCharacter/Animated Spirites/standing/standing_002.png" type="Texture" id=4]
+[ext_resource path="res://assets/ogaCharacter/Animated Spirites/walk/walk_000.png" type="Texture" id=5]
+[ext_resource path="res://assets/ogaCharacter/Animated Spirites/walk/walk_001.png" type="Texture" id=6]
+[ext_resource path="res://assets/ogaCharacter/Animated Spirites/walk/walk_002.png" type="Texture" id=7]
+[ext_resource path="res://assets/ogaCharacter/Animated Spirites/walk/walk_003.png" type="Texture" id=8]
+[ext_resource path="res://assets/ogaCharacter/Animated Spirites/walk/walk_004.png" type="Texture" id=9]
+[ext_resource path="res://assets/ogaCharacter/Animated Spirites/walk/walk_005.png" type="Texture" id=10]
 
-[sub_resource type="RectangleShape2D" id=1]
+[sub_resource type="SpriteFrames" id=1]
+
+animations = [ {
+"frames": [ ExtResource( 2 ), ExtResource( 3 ), ExtResource( 4 ) ],
+"loop": true,
+"name": "idle",
+"speed": 1.0
+}, {
+"frames": [ ExtResource( 5 ), ExtResource( 6 ), ExtResource( 7 ), ExtResource( 8 ), ExtResource( 9 ), ExtResource( 10 ) ],
+"loop": true,
+"name": "run",
+"speed": 10.0
+} ]
+
+[sub_resource type="RectangleShape2D" id=2]
 
 custom_solver_bias = 0.0
-extents = Vector2( 12.0293, 12.0735 )
+extents = Vector2( 13.4645, 25.581 )
 
 [node name="Character" type="KinematicBody2D"]
 
@@ -22,22 +44,27 @@ __meta__ = {
 id = 0
 speed = 250
 
-[node name="Sprite" type="Sprite" parent="." index="0"]
+[node name="Sprite" type="AnimatedSprite" parent="." index="0"]
 
-scale = Vector2( 0.4, 0.4 )
-texture = ExtResource( 2 )
+scale = Vector2( 0.04, 0.04 )
+frames = SubResource( 1 )
+animation = "run"
+frame = 2
+playing = true
 _sections_unfolded = [ "Material", "Transform" ]
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." index="1"]
 
-shape = SubResource( 1 )
+position = Vector2( 0, 14.0573 )
+scale = Vector2( 1, 0.508161 )
+shape = SubResource( 2 )
 
 [node name="Camera2D" type="Camera2D" parent="." index="2"]
 
 anchor_mode = 1
 rotating = false
 current = true
-zoom = Vector2( 0.5, 0.5 )
+zoom = Vector2( 1, 1 )
 limit_left = -10000000
 limit_top = -10000000
 limit_right = 10000000
